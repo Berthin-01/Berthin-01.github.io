@@ -13,6 +13,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/style.css" />
+  <!-- EmailJS SDK – free email delivery (200/month) -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>
+    (function(){
+      // Replace with your EmailJS Public Key after setup (see README.md)
+      if (typeof emailjs !== 'undefined') {
+        emailjs.init({ publicKey: 'YOUR_PUBLIC_KEY' });
+      }
+    })();
+  </script>
 </head>
 <body>
 
@@ -621,18 +631,17 @@
         </div>
 
         <form class="contact-form reveal-right" id="contactForm" novalidate>
-          <!-- Formspree anti-spam honeypot -->
-          <input type="text" name="_gotcha" style="display:none" />
-          <input type="hidden" name="_subject" value="📬 Nouveau message depuis votre Portfolio" />
-          <input type="hidden" name="_language" value="fr" />
+          <!-- EmailJS hidden fields -->
+          <input type="hidden" name="to_email" value="ralaiveloberthin@gmail.com" />
+          <input type="hidden" name="portfolio_url" value="https://berthin-01.github.io" />
           <div class="form-row">
             <div class="form-group">
               <label for="formName">Nom complet</label>
-              <input type="text" id="formName" name="name" placeholder="Votre nom" required />
+              <input type="text" id="formName" name="from_name" placeholder="Votre nom" required />
             </div>
             <div class="form-group">
               <label for="formEmail">Email</label>
-              <input type="email" id="formEmail" name="email" placeholder="votre@email.com" required />
+              <input type="email" id="formEmail" name="reply_to" placeholder="votre@email.com" required />
             </div>
           </div>
           <div class="form-group">
@@ -651,7 +660,7 @@
             ✅ Message envoyé avec succès ! Je vous répondrai bientôt.
           </div>
           <div class="form-error" id="formError">
-            ❌ Une erreur s'est produite. Veuillez réessayer ou m'écrire directement à ralaiveloberthin@gmail.com
+            ❌ Erreur d'envoi. Écrivez-moi directement : ralaiveloberthin@gmail.com
           </div>
         </form>
       </div>

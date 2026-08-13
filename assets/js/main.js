@@ -248,14 +248,23 @@ filterBtns.forEach(btn => {
   });
 });
 
-/* ---- Contact form – Formspree ---- */
+/* ============================================================
+   CONTACT FORM – EmailJS (100% gratuit, 200 emails/mois)
+   ============================================================
+   CONFIGURATION REQUISE (une seule fois) :
+   1. Allez sur https://www.emailjs.com → créez un compte gratuit
+   2. Add Service → connectez votre Gmail → copiez le Service ID
+   3. Email Templates → créez un template → copiez le Template ID
+   4. Account → API Keys → copiez la Public Key
+   5. Remplacez les 3 valeurs ci-dessous et faites git push
+   ============================================================ */
+const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';   // ex: service_abc123
+const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';  // ex: template_xyz789
+const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';   // ex: user_AbCdEfGhIjK
+
 const contactForm = document.getElementById('contactForm');
 const formSuccess = document.getElementById('formSuccess');
 const formError   = document.getElementById('formError');
-
-// FORMSPREE_ENDPOINT: replace YOUR_FORM_ID with your Formspree form ID
-// after completing setup at https://formspree.io (see instructions in README)
-const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xzzboewq';
 
 if (contactForm) {
   contactForm.addEventListener('submit', async (e) => {
@@ -263,30 +272,45 @@ if (contactForm) {
     if (formSuccess) formSuccess.classList.remove('visible');
     if (formError)   formError.classList.remove('visible');
 
+    // Validation basique
+    const name    = document.getElementById('formName').value.trim();
+    const email   = document.getElementById('formEmail').value.trim();
+    const subject = document.getElementById('formSubject').value.trim();
+    const message = document.getElementById('formMessage').value.trim();
+    if (!name || !email || !subject || !message) return;
+
     const btn     = document.getElementById('submitBtn');
     const btnText = btn.querySelector('.btn-text');
     btnText.textContent = 'Envoi en cours...';
     btn.disabled = true;
 
-    const data = new FormData(contactForm);
+    // Paramètres du template EmailJS
+    const templateParams = {
+      from_name   : name,
+      reply_to    : email,
+      subject     : subject,
+      message     : message,
+      to_email    : 'ralaiveloberthin@gmail.com',
+      portfolio_url: 'https://berthin-01.github.io'
+    };
 
     try {
-      const response = await fetch(FORMSPREE_ENDPOINT, {
-        method:  'POST',
-        body:    data,
-        headers: { 'Accept': 'application/json' }
-      });
-
-      if (response.ok) {
+      // Vérifie si EmailJS est chargé et configuré
+      if (typeof emailjs === 'undefined' || EMAILJS_PUBLIC_KEY === 'YOUR_PUBLIC_KEY') {
+        // Fallback mailto si EmailJS pas encore configuré
+        const mailtoUrl = 'mailto:ralaiveloberthin@gmail.com'
+          + '?subject=' + encodeURIComponent(subject)
+          + '&body='    + encodeURIComponent('De: ' + name + ' (' + email + ')\n\n' + message);
+        window.location.href = mailtoUrl;
+        formSuccess.classList.add('visible');
+      } else {
+        // Envoi via EmailJS
+        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
         formSuccess.classList.add('visible');
         contactForm.reset();
-      } else {
-        const json = await response.json().catch(() => ({}));
-        console.error('Formspree error:', json);
-        formError.classList.add('visible');
       }
     } catch (err) {
-      console.error('Network error:', err);
+      console.error('EmailJS error:', err);
       formError.classList.add('visible');
     } finally {
       btnText.textContent = 'Envoyer le message';
