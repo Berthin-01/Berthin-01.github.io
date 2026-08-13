@@ -249,14 +249,7 @@ filterBtns.forEach(btn => {
 });
 
 /* ============================================================
-   CONTACT FORM – EmailJS (100% gratuit, 200 emails/mois)
-   ============================================================
-   CONFIGURATION REQUISE (une seule fois) :
-   1. Allez sur https://www.emailjs.com → créez un compte gratuit
-   2. Add Service → connectez votre Gmail → copiez le Service ID
-   3. Email Templates → créez un template → copiez le Template ID
-   4. Account → API Keys → copiez la Public Key
-   5. Remplacez les 3 valeurs ci-dessous et faites git push
+   CONTACT FORM – EmailJS + Fallback (100% gratuit)
    ============================================================ */
 const EMAILJS_SERVICE_ID  = 'service_enh24ws';
 const EMAILJS_TEMPLATE_ID = 'template_6wjs9ih';
@@ -272,7 +265,6 @@ if (contactForm) {
     if (formSuccess) formSuccess.classList.remove('visible');
     if (formError)   formError.classList.remove('visible');
 
-    // Validation basique
     const name    = document.getElementById('formName').value.trim();
     const email   = document.getElementById('formEmail').value.trim();
     const subject = document.getElementById('formSubject').value.trim();
@@ -284,38 +276,61 @@ if (contactForm) {
     btnText.textContent = 'Envoi en cours...';
     btn.disabled = true;
 
-    // Paramètres du template EmailJS
     const templateParams = {
-      from_name   : name,
-      reply_to    : email,
-      subject     : subject,
-      message     : message,
-      to_email    : 'ralaiveloberthin@gmail.com',
+      from_name: name,
+      reply_to: email,
+      subject: subject,
+      message: message,
+      to_email: 'ralaiveloberthin@gmail.com',
       portfolio_url: 'https://berthin-01.github.io'
     };
 
-    try {
-      // Vérifie si EmailJS est chargé et configuré
-      if (typeof emailjs === 'undefined' || EMAILJS_PUBLIC_KEY === 'YOUR_PUBLIC_KEY') {
-        // Fallback mailto si EmailJS pas encore configuré
-        const mailtoUrl = 'mailto:ralaiveloberthin@gmail.com'
-          + '?subject=' + encodeURIComponent(subject)
-          + '&body='    + encodeURIComponent('De: ' + name + ' (' + email + ')\n\n' + message);
-        window.location.href = mailtoUrl;
-        formSuccess.classList.add('visible');
-      } else {
-        // Envoi via EmailJS
-        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
-        formSuccess.classList.add('visible');
-        contactForm.reset();
+    let sent = false;
+
+    // Tentative via EmailJS SDK v4
+    if (typeof emailjs !== 'undefined' && EMAILJS_PUBLIC_KEY) {
+      try {
+        await emailjs.send(
+          EMAILJS_SERVICE_ID,
+          EMAILJS_TEMPLATE_ID,
+          templateParams,
+          { publicKey: EMAILJS_PUBLIC_KEY }
+        );
+        sent = true;
+      } catch (err) {
+        console.warn('EmailJS send failed, trying sendForm...', err);
+        try {
+          await emailjs.sendForm(
+            EMAILJS_SERVICE_ID,
+            EMAILJS_TEMPLATE_ID,
+            contactForm,
+            { publicKey: EMAILJS_PUBLIC_KEY }
+          );
+          sent = true;
+        } catch (err2) {
+          console.warn('EmailJS sendForm failed:', err2);
+        }
       }
-    } catch (err) {
-      console.error('EmailJS error:', err);
-      formError.classList.add('visible');
-    } finally {
-      btnText.textContent = 'Envoyer le message';
-      btn.disabled = false;
     }
+
+    if (sent) {
+      if (formSuccess) formSuccess.classList.add('visible');
+      contactForm.reset();
+    } else {
+      // Fallback direct mailto si les clés EmailJS nécessitent une validation dans le dashboard
+      const mailtoUrl = 'mailto:ralaiveloberthin@gmail.com'
+        + '?subject=' + encodeURIComponent('📬 [' + subject + '] de ' + name)
+        + '&body='    + encodeURIComponent('De: ' + name + ' (' + email + ')\n\n' + message);
+      window.location.href = mailtoUrl;
+      if (formSuccess) {
+        formSuccess.textContent = "✅ Ouverture de votre application e-mail pour l'envoi direct à ralaiveloberthin@gmail.com";
+        formSuccess.classList.add('visible');
+      }
+      contactForm.reset();
+    }
+
+    btnText.textContent = 'Envoyer le message';
+    btn.disabled = false;
   });
 }
 
