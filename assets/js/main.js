@@ -248,31 +248,50 @@ filterBtns.forEach(btn => {
   });
 });
 
-/* ---- Contact form ---- */
+/* ---- Contact form – Formspree ---- */
 const contactForm = document.getElementById('contactForm');
 const formSuccess = document.getElementById('formSuccess');
+const formError   = document.getElementById('formError');
+
+// FORMSPREE_ENDPOINT: replace YOUR_FORM_ID with your Formspree form ID
+// after completing setup at https://formspree.io (see instructions in README)
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xzzboewq';
+
 if (contactForm) {
-  contactForm.addEventListener('submit', (e) => {
+  contactForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const btn = document.getElementById('submitBtn');
+    if (formSuccess) formSuccess.classList.remove('visible');
+    if (formError)   formError.classList.remove('visible');
+
+    const btn     = document.getElementById('submitBtn');
     const btnText = btn.querySelector('.btn-text');
     btnText.textContent = 'Envoi en cours...';
     btn.disabled = true;
-    // Simulate async send (no backend — mailto fallback)
-    setTimeout(() => {
-      const name    = document.getElementById('formName').value;
-      const email   = document.getElementById('formEmail').value;
-      const subject = document.getElementById('formSubject').value;
-      const message = document.getElementById('formMessage').value;
-      const mailtoUrl = `mailto:ralaiveloberthin@gmail.com`
-        + `?subject=${encodeURIComponent(subject)}`
-        + `&body=${encodeURIComponent(`De: ${name} (${email})\n\n${message}`)}`;
-      window.location.href = mailtoUrl;
-      formSuccess.classList.add('visible');
+
+    const data = new FormData(contactForm);
+
+    try {
+      const response = await fetch(FORMSPREE_ENDPOINT, {
+        method:  'POST',
+        body:    data,
+        headers: { 'Accept': 'application/json' }
+      });
+
+      if (response.ok) {
+        formSuccess.classList.add('visible');
+        contactForm.reset();
+      } else {
+        const json = await response.json().catch(() => ({}));
+        console.error('Formspree error:', json);
+        formError.classList.add('visible');
+      }
+    } catch (err) {
+      console.error('Network error:', err);
+      formError.classList.add('visible');
+    } finally {
       btnText.textContent = 'Envoyer le message';
       btn.disabled = false;
-      contactForm.reset();
-    }, 800);
+    }
   });
 }
 
