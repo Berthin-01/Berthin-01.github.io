@@ -258,9 +258,9 @@ filterBtns.forEach(btn => {
    4. Account → API Keys → copiez la Public Key
    5. Remplacez les 3 valeurs ci-dessous et faites git push
    ============================================================ */
-const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';   // ex: service_abc123
-const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';  // ex: template_xyz789
-const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';   // ex: user_AbCdEfGhIjK
+const EMAILJS_SERVICE_ID  = 'service_enh24ws';
+const EMAILJS_TEMPLATE_ID = 'template_6wjs9ih';
+const EMAILJS_PUBLIC_KEY  = 'l800DuOiohATww5Ki';
 
 const contactForm = document.getElementById('contactForm');
 const formSuccess = document.getElementById('formSuccess');
