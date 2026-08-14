@@ -16,14 +16,14 @@ if (cursor && follower) {
     mouseX = e.clientX;
     mouseY = e.clientY;
     cursor.style.left = mouseX + 'px';
-    cursor.style.top  = mouseY + 'px';
+    cursor.style.top = mouseY + 'px';
   });
 
   function animateFollower() {
     followerX += (mouseX - followerX) * 0.12;
     followerY += (mouseY - followerY) * 0.12;
     follower.style.left = followerX + 'px';
-    follower.style.top  = followerY + 'px';
+    follower.style.top = followerY + 'px';
     requestAnimationFrame(animateFollower);
   }
   animateFollower();
@@ -51,7 +51,7 @@ if (canvas) {
   let animId;
 
   function resize() {
-    canvas.width  = window.innerWidth;
+    canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
   }
   resize();
@@ -251,27 +251,27 @@ filterBtns.forEach(btn => {
 /* ============================================================
    CONTACT FORM – EmailJS + Fallback (100% gratuit)
    ============================================================ */
-const EMAILJS_SERVICE_ID  = 'service_enh24ws';
+const EMAILJS_SERVICE_ID = 'service_ftzl1dn';
 const EMAILJS_TEMPLATE_ID = 'template_6wjs9ih';
-const EMAILJS_PUBLIC_KEY  = 'l800DuOiohATww5Ki';
+const EMAILJS_PUBLIC_KEY = 'l800DuOiohATww5Ki';
 
 const contactForm = document.getElementById('contactForm');
 const formSuccess = document.getElementById('formSuccess');
-const formError   = document.getElementById('formError');
+const formError = document.getElementById('formError');
 
 if (contactForm) {
   contactForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (formSuccess) formSuccess.classList.remove('visible');
-    if (formError)   formError.classList.remove('visible');
+    if (formError) formError.classList.remove('visible');
 
-    const name    = document.getElementById('formName').value.trim();
-    const email   = document.getElementById('formEmail').value.trim();
+    const name = document.getElementById('formName').value.trim();
+    const email = document.getElementById('formEmail').value.trim();
     const subject = document.getElementById('formSubject').value.trim();
     const message = document.getElementById('formMessage').value.trim();
     if (!name || !email || !subject || !message) return;
 
-    const btn     = document.getElementById('submitBtn');
+    const btn = document.getElementById('submitBtn');
     const btnText = btn.querySelector('.btn-text');
     btnText.textContent = 'Envoi en cours...';
     btn.disabled = true;
@@ -320,7 +320,7 @@ if (contactForm) {
       // Fallback direct mailto si les clés EmailJS nécessitent une validation dans le dashboard
       const mailtoUrl = 'mailto:ralaiveloberthin@gmail.com'
         + '?subject=' + encodeURIComponent('📬 [' + subject + '] de ' + name)
-        + '&body='    + encodeURIComponent('De: ' + name + ' (' + email + ')\n\n' + message);
+        + '&body=' + encodeURIComponent('De: ' + name + ' (' + email + ')\n\n' + message);
       window.location.href = mailtoUrl;
       if (formSuccess) {
         formSuccess.textContent = "✅ Ouverture de votre application e-mail pour l'envoi direct à ralaiveloberthin@gmail.com";
@@ -339,7 +339,7 @@ document.querySelectorAll('.project-card').forEach(card => {
   card.addEventListener('mousemove', (e) => {
     const rect = card.getBoundingClientRect();
     const x = ((e.clientX - rect.left) / rect.width - 0.5) * 8;
-    const y = ((e.clientY - rect.top)  / rect.height - 0.5) * -8;
+    const y = ((e.clientY - rect.top) / rect.height - 0.5) * -8;
     card.style.transform = `translateY(-6px) rotateX(${y}deg) rotateY(${x}deg)`;
     card.style.transition = 'transform 0.05s linear';
   });
