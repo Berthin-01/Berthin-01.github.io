@@ -110,11 +110,8 @@ if (canvas) {
 
 /* ---- Typing Effect ---- */
 const roles = [
-  'Data Scientist',
-  'Data Engineer',
-  'BI Analyst',
-  'ML Engineer',
-  'Développeur IA'
+  'Data et Intelligence Artificielle',
+  'Data Science et Intelligence Artificielle'
 ];
 const typingEl = document.getElementById('typingText');
 if (typingEl) {
